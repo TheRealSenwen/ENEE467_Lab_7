@@ -80,6 +80,7 @@ int main(int argc, char **argv){
     trajectory = ArmController::planCartesianPath(start_pose, waypoints, reference_frame, arm_move_group);
 
     n.setParam("/record_pose", true);
+    ROS_INFO("Moving to cartesian target");
     arm_move_group.execute(trajectory);
     n.setParam("/record_pose", false);
 
