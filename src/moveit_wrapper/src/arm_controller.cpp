@@ -119,7 +119,7 @@ void ArmController::createCollisionObject(
 
     collision_obj.id = primitive_id;
     collision_obj.header.frame_id = planning_frame;
-    
+
     if(primitive_type == "BOX"){
       primitive.type = primitive.BOX;
       primitive.dimensions.resize(3);
@@ -161,8 +161,12 @@ void ArmController::addCollisionObjectToScene(
 
 moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pose start_pose, std::vector<geometry_msgs::Pose> waypoints,
   std::string &reference_frame, moveit::planning_interface::MoveGroupInterface &move_group_interface){
+
+  trajectory_processing::TimeOptimalTrajectoryGeneration totg;
+
   moveit::core::RobotState start_state(*move_group_interface.getCurrentState());
   const robot_state::JointModelGroup *joint_model_group = start_state.getJointModelGroup(move_group_interface.getName());
+
   start_state.setFromIK(joint_model_group, start_pose);
   move_group_interface.setStartState(start_state);
 
@@ -183,6 +187,13 @@ moveit_msgs::RobotTrajectory ArmController::planCartesianPath(geometry_msgs::Pos
 
   // if(fraction >= 0.0) move_group_interface.execute(trajectory);
   // else ROS_INFO("plan_failed");
+
+  // Retime trajectory before execution
+  robot_trajectory::RobotTrajectory rt(move_group_interface.getCurrentState()->getRobotModel(), move_group_interface.getName());
+  rt.setRobotTrajectoryMsg(*move_group_interface.getCurrentState(), trajectory);
+
+  totg.computeTimeStamps(rt, 0.1, 0.1);
+  rt.getRobotTrajectoryMsg(trajectory);
 
   return trajectory;
 }

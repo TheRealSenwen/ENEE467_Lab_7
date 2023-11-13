@@ -33,6 +33,7 @@ RUN sudo mkdir -p -m 0700 /run/user/${UID} && \
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends --allow-unauthenticated \
     software-properties-common \
     build-essential \
+    bash-completion \
     g++ \
     git \
     ca-certificates \

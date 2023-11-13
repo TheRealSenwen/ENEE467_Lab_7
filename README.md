@@ -159,7 +159,7 @@ catkin build
 source devel/setup.bash
 tmux new-session \; \split-window -v \; \split-window -h \; \select-pane -t 1 \; \split-window -h
 ```
-3. Copy unique for each arm kinematics configuration file from the `Desktop/ENEE467 IMPORTANT` folder to the `Lab_7/src/ur3e_setup/config` folder.
+3. Copy the calibrated for each arm kinematics configuration file from the `Desktop/ENEE467 IMPORTANT` folder to the `Lab_7/src/ur3e_setup/config` folder.
 
 4. Instead of Gazebo launch ROS drivers to connect to the robot arm:
 

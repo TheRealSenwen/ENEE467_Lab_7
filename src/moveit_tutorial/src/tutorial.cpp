@@ -53,7 +53,7 @@ int main(int argc, char **argv){
     pose_target.orientation.w = 0.707;
 
     bool pose_plan_success;
-    std::string reference_frame = "base_link";
+    std::string reference_frame = "world";
     pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
 
     if(pose_plan_success){

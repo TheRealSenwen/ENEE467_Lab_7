@@ -31,6 +31,9 @@
 
 #include <moveit_msgs/CollisionObject.h>
 
+// Time-optimal trajectory planning
+#include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
+
 // Robot State
 #include <moveit/robot_state/conversions.h>
 #include <moveit_msgs/DisplayRobotState.h>
