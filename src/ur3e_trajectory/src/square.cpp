@@ -28,14 +28,14 @@ int main(int argc, char **argv)
     std::string reference_frame = "world";
 
     // Create instance of joint target plan
-    /*
+    
     moveit::planning_interface::MoveGroupInterface::Plan joint_plan;
 
     std::map<std::string, double> joint_targets;
-    joint_targets["elbow_joint"] = 0.08*2;
-    joint_targets["shoulder_lift_joint"] = -0.08;
-    joint_targets["shoulder_pan_joint"] = 1.57;
-    joint_targets["wrist_1_joint"] = -1.57-0.08;
+    joint_targets["elbow_joint"] = -M_PI/18.0;
+    joint_targets["shoulder_lift_joint"] = -M_PI/2.0-M_PI/18.0;
+    joint_targets["shoulder_pan_joint"] = 0.0;
+    joint_targets["wrist_1_joint"] = -M_PI/2.0-M_PI/18.0;
     joint_targets["wrist_2_joint"] = 0.0;
     joint_targets["wrist_3_joint"] = 0.0;
 
@@ -46,18 +46,18 @@ int main(int argc, char **argv)
         ROS_INFO("Moving to joint target");
         arm_move_group.execute(joint_plan);
     }
-    */
+    
 
     // Create instance of pose target plan
     
     moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
 
     geometry_msgs::Pose pose_target;
-    pose_target.position.x = 0.3;
-    pose_target.position.y = 0.3;
-    pose_target.position.z = 1.3;
+    pose_target.position.x = -0.45;
+    pose_target.position.y = 0.0;
+    pose_target.position.z = 0.77+0.128;
     pose_target.orientation.x = 0.0;
-    pose_target.orientation.y = 0.0;
+    pose_target.orientation.y = 1.0;
     pose_target.orientation.z = 0.0;
     pose_target.orientation.w = 0.0;
 
@@ -72,28 +72,34 @@ int main(int argc, char **argv)
 
     // Get the start Pose
     geometry_msgs::Pose start_pose = arm_move_group.getCurrentPose().pose;
-    double z0 = start_pose.position.z;
+    std::cout << start_pose.position.x << "," << start_pose.position.y << "," << start_pose.position.z << std::endl;
+    double z0 = 0.77+0.128;
 
-    // Generate square path
-    double square_path_x[] = {0.2, 0.2, 0.3, 0.3};
-    double square_path_y[] = {0.3, 0.2, 0.2, 0.3};
-    double square_path_z[] = {z0, z0, z0, z0};
+    // Generate square path (horizontal)
+    double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0};
+    double horizontal_square_path_y[] = {0.0, 0.45, 0.0, -0.45};
+    double horizontal_square_path_z[] = {z0, z0, z0, z0};
+
+    // Generate square path (vertical)
+    double vertical_square_path_x[] = {-0.3, -0.3, -0.3, -0.3};
+    double vertical_square_path_y[] = {0.0, 0.1, 0.0, -0.1};
+    double vertical_square_path_z[] = {z0, z0+0.1, z0+0.2, z0+0.1};
 
     // Generate path for largest possible square
-    double L = 0.4*cos(atan(2));
-    double tilt = 0.02;
+    double r = 0.45;
+    double tilt = M_PI/36;
 
-    double largest_path_x[] = {L, L, -L, -L};
-    double largest_path_y[] = {0.0, 2*L*cos(tilt), 2*L*cos(tilt), 0.0};
-    double largest_path_z[] = {z0, z0+L*sin(tilt), z0+L*sin(tilt), z0};
+    double largest_path_x[] = {-r, 0.0, r, 0.0};
+    double largest_path_y[] = {0.0, r*cos(tilt), 0.0, -r*cos(tilt)};
+    double largest_path_z[] = {z0, z0+r*sin(tilt), z0, z0+r*sin(tilt)};
 
     // Define waypoints for cartesian path
     geometry_msgs::Pose end_pose = start_pose;
     std::vector<geometry_msgs::Pose> waypoints;
 
-    double* path_x = largest_path_x;
-    double* path_y = largest_path_y;
-    double* path_z = largest_path_z;
+    double* path_x = vertical_square_path_x;
+    double* path_y = vertical_square_path_y;
+    double* path_z = vertical_square_path_z;
 
     for(int i = 0; i < 4; i++){
         end_pose.position.x = path_x[i];

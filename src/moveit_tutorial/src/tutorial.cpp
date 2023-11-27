@@ -47,10 +47,10 @@ int main(int argc, char **argv){
     pose_target.position.x = 0.25;
     pose_target.position.y = 0.2;
     pose_target.position.z = 1.1;
-    pose_target.orientation.x = -0.707;
-    pose_target.orientation.y = 0.0;
+    pose_target.orientation.x = 0.0;
+    pose_target.orientation.y = 1.0;
     pose_target.orientation.z = 0.0;
-    pose_target.orientation.w = 0.707;
+    pose_target.orientation.w = 0.0;
 
     bool pose_plan_success;
     std::string reference_frame = "world";
