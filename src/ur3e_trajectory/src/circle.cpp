@@ -26,20 +26,42 @@ int main(int argc, char **argv)
 
     //Write your code for following the circle trajectory here.
     
+    std::string reference_frame = "world";
+
+    // Create instance of joint target plan
+    
+    moveit::planning_interface::MoveGroupInterface::Plan joint_plan;
+
+    std::map<std::string, double> joint_targets;
+    joint_targets["elbow_joint"] = -M_PI/18.0;
+    joint_targets["shoulder_lift_joint"] = -M_PI/2.0-M_PI/18.0;
+    joint_targets["shoulder_pan_joint"] = 0.0;
+    joint_targets["wrist_1_joint"] = -M_PI/2.0-M_PI/18.0;
+    joint_targets["wrist_2_joint"] = 0.0;
+    joint_targets["wrist_3_joint"] = 0.0;
+
+    bool joint_plan_success;
+    joint_plan_success = ArmController::planToJointTargets(planning_options, arm_move_group, joint_plan, joint_targets);
+
+    if(joint_plan_success){
+        ROS_INFO("Moving to joint target");
+        arm_move_group.execute(joint_plan);
+    }
+
     // Create instance of pose target plan
+    
     moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
 
     geometry_msgs::Pose pose_target;
-    pose_target.position.x = 0.0;
-    pose_target.position.y = -0.18;
-    pose_target.position.z = 1.4;
+    pose_target.position.x = -0.3;
+    pose_target.position.y = 0.0;
+    pose_target.position.z = 0.77+0.128+0.15;
     pose_target.orientation.x = 0.0;
-    pose_target.orientation.y = 0.707;
+    pose_target.orientation.y = 1.0;
     pose_target.orientation.z = 0.0;
-    pose_target.orientation.w = 0.707;
+    pose_target.orientation.w = 0.0;
 
     bool pose_plan_success;
-    std::string reference_frame = "world";
     pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
 
     if(pose_plan_success){
@@ -49,21 +71,19 @@ int main(int argc, char **argv)
 
     // Get the start Pose
     geometry_msgs::Pose start_pose = arm_move_group.getCurrentPose().pose;
-    //start_pose.position.z -= 0.77;
-
     geometry_msgs::Pose end_pose = start_pose;
-#include <cmath>
+
     // Define waypoints for cartesian path
     std::vector<geometry_msgs::Pose> waypoints;
 
-    double radius = 0.05;
+    double radius = 0.1;
     double x_origin = pose_target.position.x;
     double y_origin = pose_target.position.y;
     double z_origin = pose_target.position.z;
     double x_coord, y_coord, z_coord;
 
     int number_of_points = 20;
-    int plane = 2; // 1: XY, 2: XZ, 3: YZ
+    int plane = 1; // 1: XY, 2: XZ, 3: YZ
 
     for(int i = 0; i < number_of_points; i++){
         if(plane == 1){

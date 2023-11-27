@@ -76,32 +76,44 @@ int main(int argc, char **argv)
     double z0 = 0.77+0.128;
 
     // Generate square path (horizontal)
-    double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0};
-    double horizontal_square_path_y[] = {0.0, 0.45, 0.0, -0.45};
-    double horizontal_square_path_z[] = {z0, z0, z0, z0};
+    //double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0, -0.3};
+    //double horizontal_square_path_y[] = {0.0, 0.45, 0.0, -0.45, -0.2};
+    //double horizontal_square_path_z[] = {z0, z0, z0, z0, z0};
+
+    double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0, -0.45};
+    double horizontal_square_path_y[] = {0.0, -0.45, 0.0, 0.45, 0.318, 0.0};
+    double horizontal_square_path_z[] = {z0, z0, z0, z0, z0};
 
     // Generate square path (vertical)
-    double vertical_square_path_x[] = {-0.3, -0.3, -0.3, -0.3};
-    double vertical_square_path_y[] = {0.0, 0.1, 0.0, -0.1};
-    double vertical_square_path_z[] = {z0, z0+0.1, z0+0.2, z0+0.1};
+    double vertical_square_path_x[] = {-0.3, -0.3, -0.3, -0.3, -0.3};
+    double vertical_square_path_y[] = {0.0, 0.1, 0.0, -0.1, 0.0};
+    double vertical_square_path_z[] = {z0, z0+0.1, z0+0.2, z0+0.1, z0};
 
     // Generate path for largest possible square
     double r = 0.45;
-    double tilt = M_PI/36;
+    double tilt = M_PI/18;
 
-    double largest_path_x[] = {-r, 0.0, r, 0.0};
-    double largest_path_y[] = {0.0, r*cos(tilt), 0.0, -r*cos(tilt)};
-    double largest_path_z[] = {z0, z0+r*sin(tilt), z0, z0+r*sin(tilt)};
+    double largest_path_x[] = {-r, 0.0, r, 0.0, -r};
+    double largest_path_y[] = {0.0, r*cos(tilt), 0.0, -r*cos(tilt), 0.0};
+    double largest_path_z[] = {z0, z0+r*sin(tilt), z0, z0-r*sin(tilt), z0};
 
     // Define waypoints for cartesian path
     geometry_msgs::Pose end_pose = start_pose;
     std::vector<geometry_msgs::Pose> waypoints;
 
-    double* path_x = vertical_square_path_x;
-    double* path_y = vertical_square_path_y;
-    double* path_z = vertical_square_path_z;
+    double* path_x = largest_path_x;
+    double* path_y = largest_path_y;
+    double* path_z = largest_path_z;
 
-    for(int i = 0; i < 4; i++){
+    //double* path_x = horizontal_square_path_x;
+    //double* path_y = horizontal_square_path_y;
+    //double* path_z = horizontal_square_path_z;
+
+    //double* path_x = vertical_square_path_x;
+    //double* path_y = vertical_square_path_y;
+    //double* path_z = vertical_square_path_z;
+
+    for(int i = 0; i < 5; i++){
         end_pose.position.x = path_x[i];
         end_pose.position.y = path_y[i];
         end_pose.position.z = path_z[i];
