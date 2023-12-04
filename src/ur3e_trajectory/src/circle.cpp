@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
     // Create instance of pose target plan
 
-    int plane = 2; // 1: XY, 2: XZ, 3: YZ
+    int plane = 3; // 1: XY, 2: XZ, 3: YZ
 
     
     if(plane == 1){
