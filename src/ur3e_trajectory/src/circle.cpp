@@ -49,24 +49,71 @@ int main(int argc, char **argv)
     }
 
     // Create instance of pose target plan
+
+    int plane = 2; // 1: XY, 2: XZ, 3: YZ
+
     
-    moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
+    if(plane == 1){
+        moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
 
-    geometry_msgs::Pose pose_target;
-    pose_target.position.x = -0.3;
-    pose_target.position.y = 0.0;
-    pose_target.position.z = 0.77+0.128+0.15;
-    pose_target.orientation.x = 0.0;
-    pose_target.orientation.y = 1.0;
-    pose_target.orientation.z = 0.0;
-    pose_target.orientation.w = 0.0;
+        geometry_msgs::Pose pose_target;
+        pose_target.position.x = -0.45;
+        pose_target.position.y = 0.0;
+        pose_target.position.z = 0.77+0.128;
+        pose_target.orientation.x = 1.0;
+        pose_target.orientation.y = 0.0;
+        pose_target.orientation.z = 0.0;
+        pose_target.orientation.w = 0.0;
 
-    bool pose_plan_success;
-    pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
+        bool pose_plan_success;
+        pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
 
-    if(pose_plan_success){
-        ROS_INFO("Moving to pose target");
-        arm_move_group.execute(pose_plan);
+        if(pose_plan_success){
+            ROS_INFO("Moving to pose target");
+            arm_move_group.execute(pose_plan);
+        }
+    }
+
+    if(plane == 2){
+        moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
+
+        geometry_msgs::Pose pose_target;
+        pose_target.position.x = 0.0;
+        pose_target.position.y = 0.35;
+        pose_target.position.z = 0.77+0.2;
+        pose_target.orientation.x = 1.0;
+        pose_target.orientation.y = 0.0;
+        pose_target.orientation.z = 0.0;
+        pose_target.orientation.w = 0.0;
+
+        bool pose_plan_success;
+        pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
+
+        if(pose_plan_success){
+            ROS_INFO("Moving to pose target");
+            arm_move_group.execute(pose_plan);
+        }
+    }
+
+    if(plane == 3){
+        moveit::planning_interface::MoveGroupInterface::Plan pose_plan;
+
+        geometry_msgs::Pose pose_target;
+        pose_target.position.x = -0.25;
+        pose_target.position.y = 0.0;
+        pose_target.position.z = 0.77+0.25;
+        pose_target.orientation.x = 1.0;
+        pose_target.orientation.y = 0.0;
+        pose_target.orientation.z = 0.0;
+        pose_target.orientation.w = 0.0;
+
+        bool pose_plan_success;
+        pose_plan_success = ArmController::planToPoseTarget(planning_options, arm_move_group, pose_target, reference_frame, pose_plan);
+
+        if(pose_plan_success){
+            ROS_INFO("Moving to pose target");
+            arm_move_group.execute(pose_plan);
+        }
     }
 
     // Get the start Pose
@@ -75,19 +122,18 @@ int main(int argc, char **argv)
 
     // Define waypoints for cartesian path
     std::vector<geometry_msgs::Pose> waypoints;
-
-    double radius = 0.1;
-    double x_origin = pose_target.position.x;
-    double y_origin = pose_target.position.y;
-    double z_origin = pose_target.position.z;
     double x_coord, y_coord, z_coord;
 
     int number_of_points = 20;
-    int plane = 1; // 1: XY, 2: XZ, 3: YZ
+    
+    if(plane == 1){
+        double radius = 0.45;
+        double x_origin = 0.0;
+        double y_origin = 0.0;
+        double z_origin = start_pose.position.z;
 
-    for(int i = 0; i < number_of_points; i++){
-        if(plane == 1){
-            x_coord = x_origin + radius * cos(i*2*M_PI/number_of_points);
+        for(int i = 0; i <= number_of_points; i++){
+            x_coord = x_origin + -radius * cos(i*2*M_PI/number_of_points);
             y_coord = y_origin + radius * sin(i*2*M_PI/number_of_points);
 
             end_pose.position.x = x_coord;
@@ -96,8 +142,15 @@ int main(int argc, char **argv)
 
             waypoints.push_back(end_pose);
         }
+    }
 
-        if(plane == 2){
+    if(plane == 2){
+        double radius = 0.15;
+        double x_origin = start_pose.position.x;
+        double y_origin = start_pose.position.y;
+        double z_origin = start_pose.position.z;
+
+        for(int i = 0; i <= number_of_points; i++){
             x_coord = x_origin + radius * cos(i*2*M_PI/number_of_points);
             z_coord = z_origin + radius * sin(i*2*M_PI/number_of_points);
             std::cout << x_coord << "," << z_coord << std::endl;
@@ -108,8 +161,15 @@ int main(int argc, char **argv)
 
             waypoints.push_back(end_pose);
         }
+    }
 
-        if(plane == 3){
+    if(plane == 3){
+        double radius = 0.2;
+        double x_origin = start_pose.position.x;
+        double y_origin = start_pose.position.y;
+        double z_origin = start_pose.position.z;
+
+        for(int i = 0; i <= number_of_points; i++){
             y_coord = y_origin + radius * cos(i*2*M_PI/number_of_points);
             z_coord = z_origin + radius * sin(i*2*M_PI/number_of_points);
 
@@ -119,7 +179,6 @@ int main(int argc, char **argv)
 
             waypoints.push_back(end_pose);
         }
-        
     }
 
     moveit_msgs::RobotTrajectory trajectory;

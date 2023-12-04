@@ -56,8 +56,8 @@ int main(int argc, char **argv)
     pose_target.position.x = -0.45;
     pose_target.position.y = 0.0;
     pose_target.position.z = 0.77+0.128;
-    pose_target.orientation.x = 0.0;
-    pose_target.orientation.y = 1.0;
+    pose_target.orientation.x = 1.0;
+    pose_target.orientation.y = 0.0;
     pose_target.orientation.z = 0.0;
     pose_target.orientation.w = 0.0;
 
@@ -76,12 +76,8 @@ int main(int argc, char **argv)
     double z0 = 0.77+0.128;
 
     // Generate square path (horizontal)
-    //double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0, -0.3};
-    //double horizontal_square_path_y[] = {0.0, 0.45, 0.0, -0.45, -0.2};
-    //double horizontal_square_path_z[] = {z0, z0, z0, z0, z0};
-
     double horizontal_square_path_x[] = {-0.45, 0.0, 0.45, 0.0, -0.45};
-    double horizontal_square_path_y[] = {0.0, -0.45, 0.0, 0.45, 0.318, 0.0};
+    double horizontal_square_path_y[] = {0.0, 0.45, 0.0, -0.45, 0};
     double horizontal_square_path_z[] = {z0, z0, z0, z0, z0};
 
     // Generate square path (vertical)
@@ -101,23 +97,46 @@ int main(int argc, char **argv)
     geometry_msgs::Pose end_pose = start_pose;
     std::vector<geometry_msgs::Pose> waypoints;
 
-    double* path_x = largest_path_x;
-    double* path_y = largest_path_y;
-    double* path_z = largest_path_z;
 
-    //double* path_x = horizontal_square_path_x;
-    //double* path_y = horizontal_square_path_y;
-    //double* path_z = horizontal_square_path_z;
+    int path_sel = 3; //1: Largest, 2: Horizontal, 3: Vertical
 
-    //double* path_x = vertical_square_path_x;
-    //double* path_y = vertical_square_path_y;
-    //double* path_z = vertical_square_path_z;
+    if(path_sel == 1){
+        double* path_x = largest_path_x;
+        double* path_y = largest_path_y;
+        double* path_z = largest_path_z;
 
-    for(int i = 0; i < 5; i++){
-        end_pose.position.x = path_x[i];
-        end_pose.position.y = path_y[i];
-        end_pose.position.z = path_z[i];
-        waypoints.push_back(end_pose);
+        for(int i = 0; i < 5; i++){
+            end_pose.position.x = path_x[i];
+            end_pose.position.y = path_y[i];
+            end_pose.position.z = path_z[i];
+            waypoints.push_back(end_pose);
+        }
+    }
+
+    if(path_sel == 2){
+        double* path_x = horizontal_square_path_x;
+        double* path_y = horizontal_square_path_y;
+        double* path_z = horizontal_square_path_z;
+
+        for(int i = 0; i < 5; i++){
+            end_pose.position.x = path_x[i];
+            end_pose.position.y = path_y[i];
+            end_pose.position.z = path_z[i];
+            waypoints.push_back(end_pose);
+        }
+    }
+
+    if(path_sel == 3){
+        double* path_x = vertical_square_path_x;
+        double* path_y = vertical_square_path_y;
+        double* path_z = vertical_square_path_z;
+
+        for(int i = 0; i < 5; i++){
+            end_pose.position.x = path_x[i];
+            end_pose.position.y = path_y[i];
+            end_pose.position.z = path_z[i];
+            waypoints.push_back(end_pose);
+        }
     }
 
     moveit_msgs::RobotTrajectory trajectory;
