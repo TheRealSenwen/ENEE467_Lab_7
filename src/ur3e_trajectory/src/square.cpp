@@ -98,7 +98,7 @@ int main(int argc, char **argv)
     std::vector<geometry_msgs::Pose> waypoints;
 
 
-    int path_sel = 1; //1: Largest, 2: Horizontal, 3: Vertical
+    int path_sel = 3; //1: Largest, 2: Horizontal, 3: Vertical
 
     if(path_sel == 1){
         double* path_x = largest_path_x;
